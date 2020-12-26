@@ -70,28 +70,65 @@ const uint8_t colors[8][3] = {
 #define I2C_SlaveAddr   5
 
 // --------------------Magic Lighting Remote Control
-const uint32_t BTN_1           = 0xFFB04F;
-const uint32_t BTN_2           = 0xFF30CF;
-const uint32_t BTN_3           = 0xFF708F;
-const uint32_t BTN_4           = 0xFFA857;
-const uint32_t BTN_5           = 0xFF28D7;
-const uint32_t BTN_6           = 0xFF6897;
-const uint32_t BTN_7           = 0xFF9867;
-const uint32_t BTN_8           = 0xFF18E7;
-const uint32_t BTN_9           = 0xFF58A7;
-const uint32_t BTN_10          = 0xFF8877;
-const uint32_t BTN_11          = 0xFF08F7;
-const uint32_t BTN_12          = 0xFF48B7;
-const uint32_t BTN_RED         = 0xFF906F;
-const uint32_t BTN_GREEN       = 0xFF10EF;
-const uint32_t BTN_WHITE       = 0xFFD02F;
-const uint32_t BTN_BLUE        = 0xFF50AF;
-const uint32_t BTN_MUTE        = 0xFF609F; // Power off strip
-const uint32_t BTN_VOL_UP      = 0xFFF00F; // Speed up
-const uint32_t BTN_VOL_DOWN    = 0xFFE817; // Speed down
-const uint32_t BTN_CH_UP       = 0xFFA05F; // Brightness up
-const uint32_t BTN_CH_DWN      = 0xFF20DF; // Brightness down
-const uint32_t BTN_ENTER       = 0xFFE01F; // Toggle light bulb
+#define BTN_1            0xFFB04F
+#define BTN_1a           0x1001
+#define BTN_1b           0x1801
+#define BTN_2            0xFF30CF
+#define BTN_2a           0x1002
+#define BTN_2b           0x1802
+#define BTN_3            0xFF708F
+#define BTN_3a           0x1003
+#define BTN_3b           0x1803
+#define BTN_4            0xFFA857
+#define BTN_4a           0x1004
+#define BTN_4b           0x1804
+#define BTN_5            0xFF28D7
+#define BTN_5a           0x1005
+#define BTN_5b           0x1805
+#define BTN_6            0xFF6897
+#define BTN_6a           0x1006
+#define BTN_6b           0x1806
+#define BTN_7            0xFF9867
+#define BTN_7a           0x1007
+#define BTN_7b           0x1807
+#define BTN_8            0xFF18E7
+#define BTN_8a           0x1008
+#define BTN_8b           0x1808
+#define BTN_9            0xFF58A7
+#define BTN_9a           0x1009
+#define BTN_9b           0x1809
+#define BTN_RED          0xFF906F
+#define BTN_REDa         0x1019
+#define BTN_REDb         0x1819
+#define BTN_GREEN        0xFF10EF
+#define BTN_GREENa       0x1017
+#define BTN_GREENb       0x1817
+#define BTN_YELLOWa      0x101B
+#define BTN_YELLOWb      0x181B
+#define BTN_WHITE        0xFFD02F
+#define BTN_WHITEa       0x102c
+#define BTN_WHITEb       0x182c
+#define BTN_BLUE         0xFF50AF
+#define BTN_BLUEa        0x1024
+#define BTN_BLUEb        0x1824
+#define BTN_MUTE         0xFF609F // Power off strip
+#define BTN_POWERa       0x100C
+#define BTN_POWERb       0x180C
+#define BTN_VOL_UP       0xFFF00F // Speed up
+#define BTN_VOL_UPa      0x100A
+#define BTN_VOL_UPb      0x180A
+#define BTN_VOL_DOWN     0xFFE817 // Speed down
+#define BTN_VOL_DOWNa    0x100B
+#define BTN_VOL_DOWNb    0x180B
+#define BTN_CH_UP        0xFFA05F // Brightness up
+#define BTN_CH_UPa       0x102A
+#define BTN_CH_UPb       0x182A
+#define BTN_CH_DWN       0xFF20DF // Brightness down
+#define BTN_CH_DWNa      0x102E
+#define BTN_CH_DWNb      0x182E
+#define BTN_ENTER        0xFFE01F // Toggle light bulb
+#define BTN_ENTERa       0x102B
+#define BTN_ENTERb       0x182B
 
 // ------------------ End of definitions
 void setup(){
@@ -308,7 +345,7 @@ int update_anim_speed(int timerID, void (*f)()){
 				}
 				else if (speed_decrease){
 					speed_decrease = false;
-					fps = max(fps * 0.7,MIN_FPS);
+					fps = max(fps * 0.6,MIN_FPS);
 					timer.deleteTimer(timerID);
 					timerID = timer.setInterval(int(1000/fps),(*f));
 				}
@@ -412,7 +449,9 @@ void Glowing_spheres_advance(uint8_t frame, uint8_t sphere, uint8_t hue, uint8_t
 //----------------------------- Map the IR signals to global variable actions
 void interpret_IR_signal(uint32_t irCode){ 
 		switch (irCode){ // Don't forget to add 0x before the hex code given from My_Decoder.DumpResults(); and convert it to lowercase.
-			case BTN_1: // 1
+			case BTN_1:
+			case BTN_1a:
+			case BTN_1b:
 				current_anim = 1;
 				if (anim_color){
 					switch_to_next_color();
@@ -421,7 +460,9 @@ void interpret_IR_signal(uint32_t irCode){
 				}
 				illuminate_strip(anim_color);
 			break;			
-			case BTN_2: // 2
+			case BTN_2:
+			case BTN_2a:
+			case BTN_2b:
 				current_anim = 2;
 				if (anim_color){
 					switch_to_next_color();
@@ -429,52 +470,86 @@ void interpret_IR_signal(uint32_t irCode){
 					anim_color = init_color;
 				}
 				break;
-			case BTN_3: // 3
+			case BTN_3:
+			case BTN_3a:
+			case BTN_3b:
 				current_anim = 3;
 			break;
-			case BTN_4: // 4
+			case BTN_4:
+			case BTN_4a:
+			case BTN_4b:
+
 				current_anim = 4;
 			break;
-			case BTN_5: // 5
+			case BTN_5:
+			case BTN_5a:
+			case BTN_5b:
 				current_anim = 5;
 			break;
-			case BTN_6: // 6
+			case BTN_6:
+			case BTN_6a:
+			case BTN_6b:
 				current_anim = 6;
 			break;
-			case BTN_7: // 7
+			case BTN_7:
+			case BTN_7a:
+			case BTN_7b:
 				current_anim = 7;
 			break;
-			case BTN_8: // 8
+			case BTN_8:
+			case BTN_8a:
+			case BTN_8b:
 				current_anim = 8;
 			break;
-			case BTN_9: // 9
+			case BTN_9:
+			case BTN_9a:
+			case BTN_9b:
 				current_anim = 9;
 			break;
 			case BTN_CH_DWN: // Brightness down
+			case BTN_CH_DWNa: // Brightness down
+			case BTN_CH_DWNb: // Brightness down
 				global_val = max(FastLED.getBrightness(),10);
 				FastLED.setBrightness(uint8_t(float(global_val)*0.4));
 			break;
 			case BTN_CH_UP: // Brightness up
+			case BTN_CH_UPa: // Brightness up
+			case BTN_CH_UPb: // Brightness up
 				global_val = max(FastLED.getBrightness(),10);
 				FastLED.setBrightness(uint8_t(min(float(global_val)*2.5,255)));
 			break;
 			case BTN_RED: // red
+			case BTN_REDa: // red
+			case BTN_REDb: // red
 				current_anim = 1;
 				anim_color = CRGB::Red;
 			break;
 			case BTN_GREEN: // green
+			case BTN_GREENa: // green
+			case BTN_GREENb: // green
 				current_anim = 1;
 				anim_color = CRGB::Green;
 			break;	
+			case BTN_YELLOWa: // yellow
+			case BTN_YELLOWb: // yellow
+				current_anim = 1;
+				anim_color = CRGB::Yellow;
+			break;	
 			case BTN_WHITE: // white
+			case BTN_WHITEa: // white
+			case BTN_WHITEb: // white
 				current_anim = 1;
 				anim_color = CRGB::White;
 			break;
 			case BTN_BLUE: // blue
+			case BTN_BLUEa: // blue
+			case BTN_BLUEb: // blue
 				current_anim = 1;
 				anim_color = CRGB::Blue;
 			break;
 			case BTN_MUTE: // Toggle strip power
+			case BTN_POWERa: // Toggle strip power
+			case BTN_POWERb: // Toggle strip power
 				current_anim = const_color;
 				if (anim_color){
 					anim_color = CRGB::Black;
@@ -483,12 +558,18 @@ void interpret_IR_signal(uint32_t irCode){
 				}
 			break;
 			case BTN_VOL_UP: // Speed up
+			case BTN_VOL_UPa: // Speed up
+			case BTN_VOL_UPb: // Speed up
 				speed_increase = true;
 			break;
 			case BTN_VOL_DOWN: // Speed down
+			case BTN_VOL_DOWNa: // Speed down
+			case BTN_VOL_DOWNb: // Speed down
 				speed_decrease = true;
 			break;
 			case BTN_ENTER:   // Toggle 220V light bulb
+			case BTN_ENTERa:   // Toggle 220V light bulb
+			case BTN_ENTERb:   // Toggle 220V light bulb
 				digitalWrite(BULB_RELAY_PIN,!digitalRead(BULB_RELAY_PIN));
 			break;
 		}
